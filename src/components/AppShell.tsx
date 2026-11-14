@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Outlet, useNavigate } from "react-router-dom"
+import { NavLink, Outlet, useNavigate } from "react-router-dom"
 import { useAppDispatch, useAppSelector } from "../hooks/redux"
 import { logout } from "../store/authSlice"
 import type { User } from "../types/user"
@@ -18,6 +18,12 @@ const shouldAutoShow = (user: User): boolean => {
     return false
   }
 }
+
+// the active link looks highlighted, like the logo
+const linkClass = ({ isActive }: { isActive: boolean }) =>
+  `font-semibold px-1 -mx-1 ${
+    isActive ? "bg-[linear-gradient(transparent_55%,var(--color-marker)_55%)]" : "hover:underline"
+  }`
 
 export default function AppShell() {
   const dispatch = useAppDispatch()
@@ -42,16 +48,29 @@ export default function AppShell() {
   return (
     <div className="min-h-screen">
       <header className="border-b border-line bg-sheet">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-8 gap-y-3 px-6 py-3">
           <Logo />
-          <div className="flex items-center gap-3">
-            <span className="hidden text-sm text-ink-soft md:inline">
+
+          <nav
+            aria-label="Main"
+            className="order-3 flex w-full gap-6 md:order-none md:w-auto md:flex-1"
+          >
+            <NavLink to="/dashboard" className={linkClass}>
+              Dashboard
+            </NavLink>
+            <NavLink to="/topics" className={linkClass}>
+              Topics
+            </NavLink>
+          </nav>
+
+          <div className="flex items-center gap-2">
+            <span className="hidden pr-2 text-sm text-ink-soft lg:inline">
               {user?.name}
             </span>
-            <Button variant="quiet" onClick={() => setShowIntro(true)}>
+            <Button variant="quiet" size="sm" onClick={() => setShowIntro(true)}>
               How it works
             </Button>
-            <Button variant="quiet" onClick={() => dispatch(logout())}>
+            <Button variant="quiet" size="sm" onClick={() => dispatch(logout())}>
               Sign out
             </Button>
           </div>
