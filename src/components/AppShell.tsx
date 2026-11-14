@@ -22,13 +22,16 @@ const shouldAutoShow = (user: User): boolean => {
 // the active link looks highlighted, like the logo
 const linkClass = ({ isActive }: { isActive: boolean }) =>
   `font-semibold px-1 -mx-1 ${
-    isActive ? "bg-[linear-gradient(transparent_55%,var(--color-marker)_55%)]" : "hover:underline"
+    isActive
+      ? "bg-[linear-gradient(transparent_55%,var(--color-marker)_55%)]"
+      : "hover:underline"
   }`
 
 export default function AppShell() {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const user = useAppSelector((state) => state.auth.user)
+  const isAdmin = user?.roles.includes("ADMIN") ?? false
   const [showIntro, setShowIntro] = useState(() =>
     user ? shouldAutoShow(user) : false
   )
@@ -61,6 +64,11 @@ export default function AppShell() {
             <NavLink to="/topics" className={linkClass}>
               Topics
             </NavLink>
+            {isAdmin && (
+              <NavLink to="/admin/topics" className={linkClass}>
+                Manage topics
+              </NavLink>
+            )}
           </nav>
 
           <div className="flex items-center gap-2">

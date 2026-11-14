@@ -2,6 +2,7 @@ import { useEffect } from "react"
 import { Navigate, Route, Routes } from "react-router-dom"
 import AppShell from "./components/AppShell"
 import { useAppDispatch } from "./hooks/redux"
+import AdminTopics from "./pages/AdminTopics"
 import Dashboard from "./pages/Dashboard"
 import Explain from "./pages/Explain"
 import Login from "./pages/Login"
@@ -33,6 +34,11 @@ export default function App() {
           <Route path="/topics" element={<Topics />} />
           <Route path="/topics/:id/explain" element={<Explain />} />
           <Route path="/topics/:id/quiz" element={<Quiz />} />
+
+          {/* admins only */}
+          <Route element={<RequireAuth roles={["ADMIN"]} />}>
+            <Route path="/admin/topics" element={<AdminTopics />} />
+          </Route>
         </Route>
       </Route>
 
