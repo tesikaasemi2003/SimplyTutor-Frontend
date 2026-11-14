@@ -97,3 +97,16 @@
     opacity: 1;
   }
 }
+
+/* lined notebook paper for writing */
+.ruled {
+  background-color: var(--color-sheet);
+  background-image: linear-gradient(
+    transparent calc(2rem - 1px),
+    rgba(22, 33, 62, 0.12) calc(2rem - 1px)
+  );
+  background-size: 100% 2rem;
+  background-position: 0 1rem;
+  background-attachment: local;
+  line-height: 2rem;
+}
