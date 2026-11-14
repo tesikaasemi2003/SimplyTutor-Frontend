@@ -7,3 +7,5 @@ export interface Topic {
   category: string
   difficulty: Difficulty
 }
+
+export type TopicInput = Omit<Topic, "_id">
