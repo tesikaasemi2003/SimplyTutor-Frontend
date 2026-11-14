@@ -5,6 +5,7 @@ import { useAppDispatch } from "./hooks/redux"
 import Dashboard from "./pages/Dashboard"
 import Explain from "./pages/Explain"
 import Login from "./pages/Login"
+import Quiz from "./pages/Quiz"
 import Register from "./pages/Register"
 import Topics from "./pages/Topics"
 import { GuestOnly, RequireAuth } from "./router/guards"
@@ -31,6 +32,7 @@ export default function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/topics" element={<Topics />} />
           <Route path="/topics/:id/explain" element={<Explain />} />
+          <Route path="/topics/:id/quiz" element={<Quiz />} />
         </Route>
       </Route>
 
