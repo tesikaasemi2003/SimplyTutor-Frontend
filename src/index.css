@@ -110,3 +110,130 @@
   background-attachment: local;
   line-height: 2rem;
 }
+
+/* ---------- motion ---------- */
+
+/* a bar that grows from the left */
+.fill-in {
+  transform-origin: left center;
+  animation: fill-in 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* things that appear one after another */
+.rise-in {
+  animation: rise-in 0.5s ease-out both;
+}
+
+/* tutor notes slide in from the margin */
+.note-in {
+  animation: note-in 0.5s ease-out both;
+}
+
+/* a quiz question card being dealt */
+.card-in {
+  animation: card-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* a highlighter sweep behind a box (week strip) */
+.mark-box {
+  background-image: linear-gradient(var(--color-marker), var(--color-marker));
+  background-repeat: no-repeat;
+  background-size: 0% 100%;
+  animation: sweep 0.6s ease-out forwards;
+}
+
+/* the tutor highlights lines while it reads */
+.reading-line {
+  background-image: linear-gradient(var(--color-marker), var(--color-marker));
+  background-repeat: no-repeat;
+  background-size: 0% 100%;
+  animation: read 1.8s ease-in-out infinite;
+}
+
+/* grey placeholder lines while data loads */
+.skeleton {
+  background-color: var(--color-line);
+  animation: pulse-soft 1.4s ease-in-out infinite;
+}
+
+@keyframes fill-in {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes note-in {
+  from {
+    opacity: 0;
+    transform: translateX(-14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateX(var(--card-from, 28px)) rotate(var(--card-rot, 1.5deg));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes read {
+  0% {
+    background-size: 0% 100%;
+  }
+  60%,
+  100% {
+    background-size: 100% 100%;
+  }
+}
+
+@keyframes pulse-soft {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fill-in,
+  .rise-in,
+  .note-in,
+  .card-in {
+    animation: none;
+  }
+  .mark-box {
+    animation: none;
+    background-size: 100% 100%;
+  }
+  .reading-line {
+    animation: none;
+    background-size: 35% 100%;
+  }
+  .skeleton {
+    animation: none;
+  }
+}
