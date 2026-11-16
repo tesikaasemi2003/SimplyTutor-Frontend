@@ -56,13 +56,16 @@ export default function AppShell() {
 
           <nav
             aria-label="Main"
-            className="order-3 flex w-full gap-6 md:order-none md:w-auto md:flex-1"
+            className="order-3 flex w-full flex-wrap gap-x-6 gap-y-1 md:order-none md:w-auto md:flex-1"
           >
             <NavLink to="/dashboard" className={linkClass}>
               Dashboard
             </NavLink>
             <NavLink to="/topics" className={linkClass}>
               Topics
+            </NavLink>
+            <NavLink to="/history" className={linkClass}>
+              History
             </NavLink>
             {isAdmin && (
               <NavLink to="/admin/topics" className={linkClass}>
