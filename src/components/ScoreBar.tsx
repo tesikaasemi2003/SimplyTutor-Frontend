@@ -3,18 +3,34 @@ type Props = {
   label: string
   // optional: where the score was last time, drawn as a dark line
   previous?: number
+  // grow the bar from empty when it appears
+  animate?: boolean
+  // milliseconds to wait before it starts growing
+  delay?: number
 }
 
 const clamp = (n: number) => Math.min(100, Math.max(0, n))
 
-export default function ScoreBar({ value, label, previous }: Props) {
+export default function ScoreBar({
+  value,
+  label,
+  previous,
+  animate = false,
+  delay = 0
+}: Props) {
   return (
     <div
       role="img"
       aria-label={label}
       className="relative h-3 overflow-hidden rounded-full border border-ink bg-sheet"
     >
-      <div className="h-full bg-marker" style={{ width: `${clamp(value)}%` }} />
+      <div
+        className={`h-full bg-marker ${animate ? "fill-in" : ""}`}
+        style={{
+          width: `${clamp(value)}%`,
+          animationDelay: animate ? `${delay}ms` : undefined
+        }}
+      />
       {previous !== undefined && (
         <span
           aria-hidden="true"
