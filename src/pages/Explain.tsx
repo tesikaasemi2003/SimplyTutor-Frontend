@@ -4,6 +4,7 @@ import { Link, Navigate, useParams } from "react-router-dom"
 import Button from "../components/Button"
 import DifficultyMark from "../components/DifficultyMark"
 import FeedbackNotes from "../components/FeedbackNotes"
+import TutorReading from "../components/TutorReading"
 import { useAppSelector } from "../hooks/redux"
 import { apiError } from "../service/errors"
 import { submitExplanation } from "../service/explanation"
@@ -216,12 +217,14 @@ function ExplainContent({ topicId }: { topicId: string }) {
             <Button
               type="submit"
               loading={submitting}
-              loadingText="Your tutor is reading..."
+              loadingText="Reading..."
               disabled={count < MIN}
               className="mt-6"
             >
               Get feedback
             </Button>
+
+            {submitting && <TutorReading />}
           </form>
 
           {past.length > 0 && (
@@ -286,7 +289,11 @@ function ExplainContent({ topicId }: { topicId: string }) {
               Tutor notes
             </h2>
             <div className="mt-4">
-              <FeedbackNotes feedback={feedback} previousScore={previousScore} />
+              <FeedbackNotes
+                feedback={feedback}
+                previousScore={previousScore}
+                animated
+              />
             </div>
           </section>
         </div>

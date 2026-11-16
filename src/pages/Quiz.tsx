@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react"
+import type { CSSProperties } from "react"
 import { Link, useParams } from "react-router-dom"
 import Button from "../components/Button"
+import ScoreBar from "../components/ScoreBar"
 import { apiError } from "../service/errors"
 import { generateQuiz, submitAttempt } from "../service/quiz"
 import { getTopicById } from "../service/topic"
@@ -24,6 +26,8 @@ export default function Quiz() {
   const [quiz, setQuiz] = useState<QuizData | null>(null)
   const [answers, setAnswers] = useState<(number | null)[]>([])
   const [current, setCurrent] = useState(0)
+  // 1 = moving forward, -1 = moving back (decides where the card comes from)
+  const [dir, setDir] = useState(1)
   const [result, setResult] = useState<AttemptResult | null>(null)
 
   const [busy, setBusy] = useState(false)
@@ -49,6 +53,7 @@ export default function Quiz() {
       setQuiz(created)
       setAnswers(created.questions.map(() => null))
       setCurrent(0)
+      setDir(1)
       setResult(null)
     } catch (err) {
       setError(apiError(err, "Could not create the quiz. Try again."))
@@ -78,6 +83,16 @@ export default function Quiz() {
 
   const select = (optionIndex: number) =>
     setAnswers((prev) => prev.map((a, i) => (i === current ? optionIndex : a)))
+
+  const goNext = () => {
+    setDir(1)
+    setCurrent((c) => c + 1)
+  }
+
+  const goBack = () => {
+    setDir(-1)
+    setCurrent((c) => Math.max(c - 1, 0))
+  }
 
   if (loadError) {
     return (
@@ -168,27 +183,38 @@ export default function Quiz() {
             {quiz.questions.map((q, i) => (
               <span
                 key={q.question}
-                className={`h-1.5 flex-1 rounded-full ${
+                className={`h-1.5 flex-1 rounded-full transition-colors duration-300 ${
                   i <= current ? "bg-ink" : "bg-line"
                 }`}
               />
             ))}
           </div>
 
-          <fieldset className="mt-6">
-            <p className="text-sm font-semibold text-ink-soft">
-              Question {current + 1} of {total}
-              {quiz.questions[current].type === "SCENARIO" ? ", scenario" : ""}
-            </p>
-            <legend className="mt-2 font-serif text-2xl leading-snug">
-              {quiz.questions[current].question}
+          <fieldset
+            key={current}
+            className="card-in mt-6"
+            style={
+              {
+                "--card-from": `${dir * 28}px`,
+                "--card-rot": `${dir * 1.5}deg`
+              } as CSSProperties
+            }
+          >
+            <legend className="w-full">
+              <span className="block text-sm font-semibold text-ink-soft">
+                Question {current + 1} of {total}
+                {quiz.questions[current].type === "SCENARIO" ? ", scenario" : ""}
+              </span>
+              <span className="mt-2 block font-serif text-2xl leading-snug">
+                {quiz.questions[current].question}
+              </span>
             </legend>
 
             <div className="mt-6 space-y-3">
               {quiz.questions[current].options.map((option, i) => (
                 <label
                   key={`${current}-${i}`}
-                  className="flex cursor-pointer items-start gap-3 rounded-md border border-line bg-sheet px-4 py-3 transition-colors hover:border-ink has-[:checked]:border-ink has-[:checked]:bg-marker/30"
+                  className="flex cursor-pointer items-start gap-3 rounded-md border border-line bg-sheet px-4 py-3 transition-colors duration-200 hover:border-ink has-[:checked]:border-ink has-[:checked]:bg-marker/30"
                 >
                   <input
                     type="radio"
@@ -213,11 +239,7 @@ export default function Quiz() {
           )}
 
           <div className="mt-8 flex items-center justify-between">
-            <Button
-              variant="quiet"
-              onClick={() => setCurrent((c) => Math.max(c - 1, 0))}
-              disabled={current === 0}
-            >
+            <Button variant="quiet" onClick={goBack} disabled={current === 0}>
               Back
             </Button>
 
@@ -231,10 +253,7 @@ export default function Quiz() {
                 Submit quiz
               </Button>
             ) : (
-              <Button
-                onClick={() => setCurrent((c) => c + 1)}
-                disabled={picked === null}
-              >
+              <Button onClick={goNext} disabled={picked === null}>
                 Next
               </Button>
             )}
@@ -248,14 +267,12 @@ export default function Quiz() {
             {result.score} out of {result.total} correct
           </h2>
 
-          <div
-            role="img"
-            aria-label={`Score ${result.percentage} percent`}
-            className="mt-3 h-3 overflow-hidden rounded-full border border-ink bg-sheet"
-          >
-            <div
-              className="h-full bg-marker"
-              style={{ width: `${result.percentage}%` }}
+          <div className="mt-3">
+            <ScoreBar
+              value={result.percentage}
+              label={`Score ${result.percentage} percent`}
+              animate
+              delay={150}
             />
           </div>
           <p className="mt-4 font-serif text-lg leading-relaxed">
@@ -268,11 +285,12 @@ export default function Quiz() {
               return (
                 <li
                   key={item.question}
-                  className={`rounded-r-md border-l-4 px-5 py-4 ${
+                  className={`rise-in rounded-r-md border-l-4 px-5 py-4 ${
                     item.isCorrect
                       ? "border-good bg-good-wash"
                       : "border-flag bg-flag-wash"
                   }`}
+                  style={{ animationDelay: `${400 + i * 90}ms` }}
                 >
                   <p className="text-sm font-semibold">
                     Question {i + 1}: {item.isCorrect ? "Correct" : "Not quite"}
