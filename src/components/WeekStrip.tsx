@@ -26,9 +26,10 @@ export default function WeekStrip({ days }: { days: DayActivity[] }) {
               aria-label={`${fullDate}: ${summary}`}
               className={`flex h-11 w-11 items-center justify-center rounded-md border text-sm font-bold sm:h-12 sm:w-12 ${
                 count > 0
-                  ? "border-ink bg-marker"
+                  ? "mark-box border-ink bg-sheet"
                   : "border-line bg-sheet text-ink-soft"
               }`}
+              style={count > 0 ? { animationDelay: `${i * 90}ms` } : undefined}
             >
               {count > 0 ? count : ""}
             </span>

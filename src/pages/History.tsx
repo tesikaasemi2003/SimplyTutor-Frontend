@@ -11,6 +11,7 @@ import {
   getMyExplanations
 } from "../service/history"
 import type { AttemptItem, ExplanationItem } from "../types/history"
+import { SkeletonRows } from "../components/Skeleton"
 
 type Tab = "explanations" | "quizzes"
 
@@ -146,8 +147,9 @@ export default function History() {
         </p>
       )}
 
-      {loading && <p className="mt-4 text-ink-soft">Loading your history...</p>}
+        {loading && <SkeletonRows count={3} />}
 
+        
       {!loading && tab === "explanations" && (
         <section aria-labelledby="explanations-title" className="mt-2">
           <h2 id="explanations-title" className="sr-only">

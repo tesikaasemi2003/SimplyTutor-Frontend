@@ -3,6 +3,7 @@ import { Link } from "react-router-dom"
 import Button from "../components/Button"
 import QuizTrendChart from "../components/QuizTrendChart"
 import ScoreBar from "../components/ScoreBar"
+import { SkeletonRows } from "../components/Skeleton"
 import TopicScoresChart from "../components/TopicScoresChart"
 import WeekStrip from "../components/WeekStrip"
 import { useAppSelector } from "../hooks/redux"
@@ -60,9 +61,17 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <p className="mx-auto max-w-5xl px-6 py-14 text-ink-soft">
-        Loading your progress...
-      </p>
+      <div
+        role="status"
+        aria-label="Loading your progress"
+        className="mx-auto max-w-5xl px-6 py-14"
+      >
+        <div className="skeleton h-10 w-2/3 rounded-sm" />
+        <div className="skeleton mt-4 h-6 w-1/2 rounded-sm" />
+        <div className="mt-10">
+          <SkeletonRows count={3} />
+        </div>
+      </div>
     )
   }
 
@@ -151,7 +160,7 @@ export default function Dashboard() {
             </p>
 
             <ul className="mt-4 border-t border-line">
-              {topics.map((topic) => (
+              {topics.map((topic, index) => (
                 <li
                   key={topic.topicId}
                   className="grid gap-4 border-b border-line py-5 md:grid-cols-[1.2fr_1fr_auto] md:items-center md:gap-8"
@@ -164,7 +173,8 @@ export default function Dashboard() {
                       {topic.title}
                     </Link>
                     <p className="mt-0.5 text-sm text-ink-soft">
-                      {topic.category}, {plural(topic.explanations, "explanation", "explanations")},{" "}
+                      {topic.category},{" "}
+                      {plural(topic.explanations, "explanation", "explanations")},{" "}
                       {plural(topic.attempts, "quiz", "quizzes")}
                     </p>
                   </div>
@@ -179,6 +189,8 @@ export default function Dashboard() {
                     <ScoreBar
                       value={topic.mastery}
                       label={`Mastery ${topic.mastery} out of 100`}
+                      animate
+                      delay={index * 90}
                     />
                   </div>
 

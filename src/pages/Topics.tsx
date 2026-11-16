@@ -4,6 +4,7 @@ import DifficultyMark from "../components/DifficultyMark"
 import { apiError } from "../service/errors"
 import { getTopics } from "../service/topic"
 import type { Topic } from "../types/topic"
+import { SkeletonRows } from "../components/Skeleton"
 
 export default function Topics() {
   const [topics, setTopics] = useState<Topic[]>([])
@@ -58,7 +59,7 @@ export default function Topics() {
       )}
 
       <div className="mt-6">
-        {loading && <p className="py-8 text-ink-soft">Loading topics...</p>}
+        {loading && <SkeletonRows />}
 
         {error && (
           <p role="alert" className="rounded-md bg-flag-wash px-3.5 py-3 text-flag">
