@@ -18,10 +18,10 @@ export default function Mascot({ messages }: Props) {
   }
 
   return (
-    <div className="flex w-44 flex-col items-center sm:w-52">
+    <div className="flex w-52 flex-col items-center sm:w-72">
       <div
         aria-live="polite"
-        className="relative rounded-lg border-2 border-ink bg-sheet px-3 py-2 text-center text-sm font-semibold leading-snug"
+        className="relative rounded-lg border-2 border-ink bg-sheet px-4 py-2.5 text-center text-sm font-semibold leading-snug sm:text-base"
       >
         {messages[index]}
         <span className="absolute -bottom-[7px] left-1/2 h-3 w-3 -translate-x-1/2 rotate-45 border-b-2 border-r-2 border-ink bg-sheet" />
@@ -37,7 +37,7 @@ export default function Mascot({ messages }: Props) {
           key={hops}
           aria-hidden="true"
           viewBox="0 0 160 200"
-          className={`h-auto w-32 sm:w-36 ${hops > 0 ? "mascot-hop" : ""}`}
+          className={`h-auto w-44 sm:w-56 ${hops > 0 ? "mascot-hop" : ""}`}
         >
           <ellipse
             className="mascot-shadow"
