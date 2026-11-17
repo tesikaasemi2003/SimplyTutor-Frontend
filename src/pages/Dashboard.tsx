@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import Button from "../components/Button"
+import Mascot from "../components/Mascot"
 import QuizTrendChart from "../components/QuizTrendChart"
 import ScoreBar from "../components/ScoreBar"
 import { SkeletonRows } from "../components/Skeleton"
 import TopicScoresChart from "../components/TopicScoresChart"
 import WeekStrip from "../components/WeekStrip"
 import { useAppSelector } from "../hooks/redux"
+import { useCountUp } from "../hooks/useCountUp"
 import { getDashboard } from "../service/dashboard"
 import { apiError } from "../service/errors"
 import type { DashboardData, TopicMastery } from "../types/dashboard"
@@ -25,6 +27,62 @@ const LEVEL_STYLE: Record<TopicMastery["level"], string> = {
 
 const plural = (n: number, one: string, many: string) =>
   `${n} ${n === 1 ? one : many}`
+
+type Stat = {
+  label: string
+  value: number | null
+  suffix?: string
+  hint: string
+  icon: string
+}
+
+function StatCard({ stat, index }: { stat: Stat; index: number }) {
+  const hasValue = stat.value !== null
+  const shown = useCountUp(stat.value ?? 0, hasValue)
+
+  return (
+    <div
+      className="lift rise-in rounded-lg border border-line bg-sheet p-4"
+      style={{ animationDelay: `${160 + index * 80}ms` }}
+    >
+      <dt className="flex items-center gap-2 text-sm text-ink-soft">
+        <span aria-hidden="true">{stat.icon}</span>
+        {stat.label}
+      </dt>
+      <dd className="mt-1 text-2xl font-extrabold tracking-tight">
+        {hasValue ? (
+          <>
+            {shown}
+            {stat.suffix}
+          </>
+        ) : (
+          <span className="text-ink-soft">None yet</span>
+        )}
+      </dd>
+      {!hasValue && (
+        <p className="mt-1 text-xs text-ink-soft">{stat.hint}</p>
+      )}
+    </div>
+  )
+}
+
+function NotebookArt() {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 120 96"
+      className="h-24 w-28 shrink-0"
+    >
+      <rect x="14" y="10" width="76" height="80" rx="6" fill="#fff" stroke="#16213e" strokeWidth="3" />
+      <rect x="14" y="10" width="14" height="80" rx="4" fill="#ffe066" stroke="#16213e" strokeWidth="3" />
+      <path d="M40 34h38M40 48h38M40 62h24" stroke="#d9dee8" strokeWidth="3" strokeLinecap="round" />
+      <g className="wiggle">
+        <path d="M84 70l22-38 8 5-22 38-10 4z" fill="#ffe066" stroke="#16213e" strokeWidth="3" strokeLinejoin="round" />
+        <path d="M84 70l-2 10 10-4" fill="#16213e" />
+      </g>
+    </svg>
+  )
+}
 
 export default function Dashboard() {
   const user = useAppSelector((state) => state.auth.user)
@@ -100,55 +158,100 @@ export default function Dashboard() {
       : `You are on a ${streak.current}-day streak. Do something today to keep it going.`
   }
 
-  const stats = [
-    { label: "Explanations", value: String(totals.explanations) },
-    { label: "Quizzes taken", value: String(totals.quizAttempts) },
+  const mascotMessages = [
+    streak.current > 0
+      ? doneToday
+        ? "Nice work today! Keep it up."
+        : `Your ${streak.current}-day streak needs you today!`
+      : "Hi, I'm Pip! Pick a topic and explain it to me.",
+    "Explain it like you're teaching a 12-year-old.",
+    "No jargon. Short, simple words win.",
+    "Stuck? Try an example from everyday life."
+  ]
+
+  const stats: Stat[] = [
+    {
+      label: "Explanations",
+      value: totals.explanations,
+      hint: "",
+      icon: "✎"
+    },
+    {
+      label: "Quizzes taken",
+      value: totals.quizAttempts,
+      hint: "",
+      icon: "?"
+    },
     {
       label: "Average quiz score",
-      value: totals.quizAttempts ? `${totals.avgQuizScore}%` : "None yet"
+      value: totals.quizAttempts ? totals.avgQuizScore : null,
+      suffix: "%",
+      hint: "Take a quiz to see this.",
+      icon: "%"
     },
     {
       label: "Average clarity (out of 100)",
-      value: totals.explanations ? String(totals.avgClarityScore) : "None yet"
+      value: totals.explanations ? totals.avgClarityScore : null,
+      hint: "Explain a topic to see this.",
+      icon: "★"
     }
   ]
 
   return (
+    <div className="graph-paper min-h-[calc(100vh-4rem)]">
     <div className="mx-auto max-w-5xl px-6 py-12">
-      <h1 className="text-4xl font-extrabold tracking-tight">
-        Welcome back, {user.name}.
-      </h1>
-      <p className="mt-3 font-serif text-xl leading-relaxed text-ink-soft">
-        {streakText}
-      </p>
+      <div className="flex flex-wrap items-center justify-between gap-x-10 gap-y-6">
+        <div className="min-w-0 flex-1 basis-80">
+          <h1 className="rise-in text-4xl font-extrabold tracking-tight">
+            Welcome back,{" "}
+            <span className="mark" style={{ animationDelay: "500ms" }}>
+              {user.name}.
+            </span>
+          </h1>
+          <p
+            className="rise-in mt-3 font-serif text-xl leading-relaxed text-ink-soft"
+            style={{ animationDelay: "80ms" }}
+          >
+            {streakText}
+          </p>
+        </div>
+        <Mascot messages={mascotMessages} />
+      </div>
 
       <div className="mt-6">
         <WeekStrip days={activityLast7Days} />
       </div>
 
-      <dl className="mt-10 grid grid-cols-2 gap-6 border-t border-line pt-6 sm:grid-cols-4">
-        {stats.map((stat) => (
-          <div key={stat.label}>
-            <dt className="text-sm text-ink-soft">{stat.label}</dt>
-            <dd className="mt-1 text-2xl font-extrabold tracking-tight">
-              {stat.value}
-            </dd>
-          </div>
+      <dl className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-4">
+        {stats.map((stat, i) => (
+          <StatCard key={stat.label} stat={stat} index={i} />
         ))}
       </dl>
 
       {topics.length === 0 ? (
-        <section className="mt-14 border-t border-line pt-8">
-          <h2 className="text-xl font-bold">Nothing here yet</h2>
-          <p className="mt-2 max-w-xl font-serif text-lg leading-relaxed text-ink-soft">
-            Explain your first topic and your progress will show up here.
-          </p>
-          <Link
-            to="/topics"
-            className="mt-6 inline-flex rounded-md bg-ink px-5 py-3 font-semibold text-white hover:bg-[#2a3860]"
-          >
-            Browse topics
-          </Link>
+        <section
+          className="rise-in mt-14 flex flex-col items-start gap-6 rounded-lg border border-dashed border-ink/40 bg-sheet p-8 sm:flex-row sm:items-center"
+          style={{ animationDelay: "480ms" }}
+        >
+          <NotebookArt />
+          <div>
+            <h2 className="text-xl font-bold">Nothing here yet</h2>
+            <p className="mt-2 max-w-xl font-serif text-lg leading-relaxed text-ink-soft">
+              Explain your first topic and your progress will show up here.
+            </p>
+            <Link
+              to="/topics"
+              className="group mt-6 inline-flex items-center gap-2 rounded-md bg-ink px-5 py-3 font-semibold text-white transition-colors hover:bg-[#2a3860]"
+            >
+              Browse topics
+              <span
+                aria-hidden="true"
+                className="transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transition-none"
+              >
+                →
+              </span>
+            </Link>
+          </div>
         </section>
       ) : (
         <>
@@ -230,6 +333,7 @@ export default function Dashboard() {
           </div>
         </>
       )}
+    </div>
     </div>
   )
 }

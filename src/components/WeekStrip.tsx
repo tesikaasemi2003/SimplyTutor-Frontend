@@ -19,19 +19,34 @@ export default function WeekStrip({ days }: { days: DayActivity[] }) {
             ? "no activity"
             : `${count} ${count === 1 ? "activity" : "activities"}`
 
+        let box = "border-dashed border-line bg-sheet/60 text-ink-soft"
+        if (count > 0) box = "mark-box border-ink bg-sheet"
+        else if (isToday) box = "today-ring border-ink bg-sheet text-ink"
+
         return (
-          <li key={day.date} className="flex flex-col items-center gap-1.5">
+          <li
+            key={day.date}
+            className="rise-in flex flex-col items-center gap-1.5"
+            style={{ animationDelay: `${i * 60}ms` }}
+          >
             <span
               role="img"
               aria-label={`${fullDate}: ${summary}`}
-              className={`flex h-11 w-11 items-center justify-center rounded-md border text-sm font-bold sm:h-12 sm:w-12 ${
-                count > 0
-                  ? "mark-box border-ink bg-sheet"
-                  : "border-line bg-sheet text-ink-soft"
-              }`}
+              className={`flex h-11 w-11 items-center justify-center rounded-md border text-sm font-bold sm:h-12 sm:w-12 ${box}`}
               style={count > 0 ? { animationDelay: `${i * 90}ms` } : undefined}
             >
-              {count > 0 ? count : ""}
+              {count > 0 ? (
+                <span
+                  className="pop"
+                  style={{ animationDelay: `${i * 90 + 300}ms` }}
+                >
+                  {count}
+                </span>
+              ) : isToday ? (
+                <span aria-hidden="true">✎</span>
+              ) : (
+                ""
+              )}
             </span>
             <span
               className={`text-xs ${isToday ? "font-bold" : "text-ink-soft"}`}

@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { NavLink, Outlet, useNavigate } from "react-router-dom"
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom"
 import { useAppDispatch, useAppSelector } from "../hooks/redux"
 import { logout } from "../store/authSlice"
 import type { User } from "../types/user"
@@ -21,15 +21,14 @@ const shouldAutoShow = (user: User): boolean => {
 
 // the active link looks highlighted, like the logo
 const linkClass = ({ isActive }: { isActive: boolean }) =>
-  `font-semibold px-1 -mx-1 ${
-    isActive
-      ? "bg-[linear-gradient(transparent_55%,var(--color-marker)_55%)]"
-      : "hover:underline"
+  `font-semibold px-1 -mx-1 bg-[linear-gradient(transparent_55%,var(--color-marker)_55%)] bg-no-repeat bg-left transition-[background-size] duration-300 motion-reduce:transition-none ${
+    isActive ? "bg-[length:100%_100%]" : "bg-[length:0%_100%] hover:bg-[length:100%_100%]"
   }`
 
 export default function AppShell() {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
+  const location = useLocation()
   const user = useAppSelector((state) => state.auth.user)
   const isAdmin = user?.roles.includes("ADMIN") ?? false
   const [showIntro, setShowIntro] = useState(() =>
@@ -88,7 +87,9 @@ export default function AppShell() {
         </div>
       </header>
 
-      <Outlet />
+      <div key={location.pathname} className="page-in">
+        <Outlet />
+      </div>
 
       {showIntro && <OnboardingModal onClose={closeIntro} />}
     </div>
