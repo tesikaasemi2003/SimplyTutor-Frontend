@@ -237,3 +237,194 @@
     animation: none;
   }
 }
+
+/* ---------- dashboard motion ---------- */
+
+/* route change: the new page settles in */
+.page-in {
+  animation: page-in 0.35s ease-out both;
+}
+
+/* cards lift a little, like a sheet picked off the desk */
+.lift {
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.lift:hover {
+  transform: translateY(-3px) rotate(-0.4deg);
+  box-shadow: 0 6px 0 rgba(22, 33, 62, 0.1);
+}
+
+/* a ring that pulses around today's box */
+.today-ring {
+  animation: pulse-ring 1.8s ease-out infinite;
+}
+
+/* a small stamp that pops when something is done */
+.pop {
+  animation: pop 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* the empty-state pencil wiggles */
+.wiggle {
+  transform-origin: 20% 80%;
+  animation: wiggle 2.6s ease-in-out infinite;
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 224, 102, 0.9);
+  }
+  100% {
+    box-shadow: 0 0 0 10px rgba(255, 224, 102, 0);
+  }
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(0.85);
+  }
+  60% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes wiggle {
+  0%,
+  70%,
+  100% {
+    transform: rotate(0deg);
+  }
+  78% {
+    transform: rotate(-8deg);
+  }
+  86% {
+    transform: rotate(5deg);
+  }
+  94% {
+    transform: rotate(-3deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-in,
+  .today-ring,
+  .pop,
+  .wiggle {
+    animation: none;
+  }
+  .lift,
+  .lift:hover {
+    transition: none;
+    transform: none;
+  }
+}
+
+/* ---------- mascot ---------- */
+.mascot-bob {
+  animation: mascot-bob 2.4s ease-in-out infinite;
+}
+.mascot-shadow {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: mascot-shadow 2.4s ease-in-out infinite;
+}
+.mascot-blink {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: mascot-blink 4s infinite;
+}
+.mascot-wave {
+  transform-origin: 112px 104px;
+  animation: mascot-wave 2.4s ease-in-out infinite;
+}
+.mascot-hop {
+  animation: mascot-hop 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes mascot-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+@keyframes mascot-shadow {
+  0%,
+  100% {
+    transform: scaleX(1);
+  }
+  50% {
+    transform: scaleX(0.88);
+  }
+}
+@keyframes mascot-blink {
+  0%,
+  92%,
+  100% {
+    transform: scaleY(1);
+  }
+  96% {
+    transform: scaleY(0.1);
+  }
+}
+@keyframes mascot-wave {
+  0%,
+  55%,
+  100% {
+    transform: rotate(0deg);
+  }
+  65% {
+    transform: rotate(-18deg);
+  }
+  75% {
+    transform: rotate(8deg);
+  }
+  85% {
+    transform: rotate(-14deg);
+  }
+  92% {
+    transform: rotate(0deg);
+  }
+}
+@keyframes mascot-hop {
+  0% {
+    transform: translateY(0) scale(1, 1);
+  }
+  25% {
+    transform: translateY(0) scale(1.06, 0.92);
+  }
+  55% {
+    transform: translateY(-18px) scale(0.96, 1.06);
+  }
+  100% {
+    transform: translateY(0) scale(1, 1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mascot-bob,
+  .mascot-shadow,
+  .mascot-blink,
+  .mascot-wave,
+  .mascot-hop {
+    animation: none;
+  }
+}
