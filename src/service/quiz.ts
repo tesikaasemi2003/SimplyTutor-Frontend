@@ -2,10 +2,11 @@ import api from "./api"
 import type { AttemptResult, QuizData } from "../types/quiz"
 
 export const generateQuiz = async (topicId: string, count: number) => {
-  const res = await api.post<{ data: QuizData }>("/quizzes/generate", {
-    topicId,
-    count
-  })
+  const res = await api.post<{ data: QuizData }>(
+    "/quizzes/generate",
+    { topicId, count },
+    { timeout: 60000 }
+  )
   return res.data.data
 }
 
