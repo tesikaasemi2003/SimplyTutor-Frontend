@@ -63,13 +63,23 @@ export default function AppShell() {
             <NavLink to="/topics" className={linkClass}>
               Topics
             </NavLink>
+            {!isAdmin && (
+              <NavLink to="/my-topics" className={linkClass}>
+                My topics
+              </NavLink>
+            )}
             <NavLink to="/history" className={linkClass}>
               History
             </NavLink>
             {isAdmin && (
-              <NavLink to="/admin/topics" className={linkClass}>
-                Manage topics
-              </NavLink>
+              <>
+                <NavLink to="/admin/topics" className={linkClass}>
+                  Manage topics
+                </NavLink>
+                <NavLink to="/admin/requests" className={linkClass}>
+                  Requests
+                </NavLink>
+              </>
             )}
           </nav>
 

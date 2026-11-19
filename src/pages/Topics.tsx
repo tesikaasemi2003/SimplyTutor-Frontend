@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react"
 import { Link } from "react-router-dom"
 import DifficultyMark from "../components/DifficultyMark"
+import TopicBadge from "../components/TopicBadge"
+import { useAppSelector } from "../hooks/redux"
 import { apiError } from "../service/errors"
 import { getTopics } from "../service/topic"
 import type { Topic } from "../types/topic"
@@ -11,6 +13,9 @@ export default function Topics() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [category, setCategory] = useState("All")
+  const isAdmin = useAppSelector(
+    (state) => state.auth.user?.roles.includes("ADMIN") ?? false
+  )
 
   useEffect(() => {
     let active = true
@@ -37,6 +42,14 @@ export default function Topics() {
       <p className="mt-3 font-serif text-xl leading-relaxed text-ink-soft">
         Choose one and explain it in your own words.
       </p>
+      {!isAdmin && (
+        <p className="mt-2 text-sm">
+          Want something that is not here?{" "}
+          <Link to="/my-topics" className="font-semibold underline">
+            Add your own topic
+          </Link>
+        </p>
+      )}
 
       {categories.length > 2 && (
         <div className="mt-8 flex flex-wrap gap-2">
@@ -69,7 +82,17 @@ export default function Topics() {
 
         {!loading && !error && visible.length === 0 && (
           <p className="py-8 text-ink-soft">
-            No topics yet. An admin needs to add some.
+            {isAdmin ? (
+              "No topics yet. Add some in Manage topics."
+            ) : (
+              <>
+                No topics yet.{" "}
+                <Link to="/my-topics" className="font-semibold underline">
+                  Add your own
+                </Link>
+                .
+              </>
+            )}
           </p>
         )}
 
@@ -84,6 +107,9 @@ export default function Topics() {
                   <h2 className="text-xl font-bold group-hover:underline">
                     {topic.title}
                   </h2>
+                  <div className="mt-1 empty:hidden">
+                    <TopicBadge topic={topic} />
+                  </div>
                   <p className="mt-1 line-clamp-2 font-serif text-ink-soft">
                     {topic.description}
                   </p>
